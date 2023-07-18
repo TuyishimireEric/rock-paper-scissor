@@ -1,104 +1,121 @@
-let draw=0, won=0, lost=0;
+const buttons = document.querySelectorAll(".buttons li");
+const result = document.querySelector("#result");
+const title = document.querySelector("#title");
+const sLost = document.querySelector("#lost");
+const sTie = document.querySelector("#tie");
+const sWon = document.querySelector("#won");
+const Play = document.querySelector("#play");
+const overAll = document.querySelector(".overall");
+const footer = document.querySelector("footer");
+const back = document.querySelector(".back");
+const audio = document.querySelector("audio");
 
-const getComputerChoice = () => {
-    let randomNumber = Math.floor(Math.random()*3);
-    switch (randomNumber) {
-        case 0:
-            return 'rock';
-        break;
-        case 1:
-            return 'paper';
-        break;
-        case 2:
-            return 'scissor';
-        break;
-        default:
-            getComputerChoice();
-        break;
-    }
+const gameOver = (winner) => {
+  overAll.classList.remove("active");
+  footer.classList.remove("active");
+  document.querySelector(".overall p").innerHTML =
+    winner == "won" ? `✔ GAME WON!!!` : `❌ GAME LOST!`;
+    Play.innerHTML = "Play Again";
+};
+
+const paused = () => { 
+    overAll.classList.remove("active");
+    footer.classList.remove("active");
+    document.querySelector(".overall p").innerHTML = "⏸ Game Paused";  
+    Play.innerHTML = "Play Again";
 }
 
-const getPlayerChoice = () => {
-    let playerInput = prompt('Please enter your choice: ');
-    if(!playerInput.match(/rock|scissor|paper/gi)){
-        console.log("Invalid input");
-        getPlayerChoice();
-    }
-    return playerInput.toLowerCase().trim();
-}
+const update = (tie, won, lost) => {
+  sLost.innerHTML = `${lost}`;
+  sTie.innerHTML = `${tie}`;
+  sWon.innerHTML = `${won}`;
+};
 
 const playerRound = (computerSelection, playerSelection) => {
-    if(playerSelection == computerSelection){
-        draw++;
-        return `⭕ Draw! you both selected ${playerSelection}`
+  if (playerSelection == computerSelection) {
+    result.innerHTML = `⭕ Tie! you both selected ${playerSelection}`;
+    title.innerHTML = "TIE";
+    return "tie";
+  } else {
+    if (
+      (playerSelection == "rock" && computerSelection == "scissor") ||
+      (playerSelection == "paper" && computerSelection == "rock") ||
+      (playerSelection == "scissor" && computerSelection == "paper")
+    ) {
+      result.innerHTML = `✔ You won!`;
+      title.innerHTML = "WON";
+      return "won";
+    } else {
+      result.innerHTML = `❌ You lose!`;
+      title.innerHTML = "LOST";
+      return "lost";
     }
-    else if(playerSelection == 'rock'){
-        if(computerSelection == 'scissor'){
-            won++;
-            return `✔ You won! your Rock beats Scissor`;
-        }else{
-            lost++;
-            return `❌ You lose! Paper beats your Rock`;
-        }
-    }
-    else if(playerSelection == 'paper'){
-        if(computerSelection == 'rock'){
-            won++;
-            return `✔ You won! your Paper beats Rock`;
-        }else{
-          lost++;
-            return `❌ You lose! Scissor beats your Paper`;
-       }
-    }else{
-        if(computerSelection == 'paper'){
-            won++;
-            return `✔ You won! your Scissor beats Paper`;
-        }else{
-          lost++;
-            return `❌ You lose! Rock beats your Scissor`;
-       }
-    }
-}
+  }
+};
 
-const result=()=>{
-    if(won>lost){
-        return `
-        ==============================================
-                               WON 😎
-                            
-                        Won: ${won} Lost: ${lost}
-        ==============================================
-        `;
-    }
-    else if(won==lost){
-        return `
-        ==============================================
-                               DRAW 🤝
-                            
-                        Won: ${won} Lost: ${lost}
-        ==============================================
-        `;
-    }
-    else {
-        return `
-        ==============================================
-                               LOST 😰
-                            
-                        Won: ${won} Lost: ${lost}
-        ==============================================
-        `;
+const getComputerChoice = () => {
+  let randomNumber = Math.floor(Math.random() * 3);
+  switch (randomNumber) {
+    case 0:
+      return "rock";
+    case 1:
+      return "paper";
+    case 2:
+      return "scissor";
+    default:
+      return getComputerChoice();
+  }
+};
 
-    }
-}
+const start = () => {
+  let lost = 0;
+  let won = 0;
+  let tie = 0;
 
-const game=()=>{
-    for(let i=0; i<5; i++){
-        console.log(`Round ${i+1}`);
-        console.log(playerRound(getComputerChoice(), getPlayerChoice()));
-        console.log("----------------")
+  const handleButtonClick = (e) => {
+    const playerChoice = e.target.className;
+    const computerChoice = getComputerChoice();
+    const response = playerRound(playerChoice, computerChoice);
+
+    if (response === "tie") {
+      tie++;
+    } else if (response === "won") {
+      won++;
+    } else {
+      lost++;
     }
 
-    console.log(result());
-}
+    update(tie, won, lost);
+    setTimeout(() => {
+        title.innerHTML = "Let's Play..";
+      result.innerHTML = "waiting...";
+    }, 2000);
 
-game();
+    if (won > 4) {
+        won = 0;
+        lost=0;
+        tie = 0;
+        update(tie, won, lost);
+        gameOver("won");
+    } else if (lost > 4) {
+        won = 0;
+        lost=0;
+        tie = 0;
+        update(tie, won, lost);
+        gameOver("lost");
+    }
+  };
+
+  Play.addEventListener("click", () => {
+    overAll.classList.add("active");
+    footer.classList.add("active");
+
+    for (const button of buttons) {
+      button.addEventListener("click", handleButtonClick);
+    }
+  });
+};
+
+back.addEventListener("click", paused);
+
+window.addEventListener("load", start);
