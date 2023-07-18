@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rock-Paper-Scissor</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    
+    
+    <div class="play">
+        <div class="overall">
+            <p>Welcome to the exciting game of Rock Paper Scissors! 
+                Test your strategy, intuition, and luck as you choose between
+                 rock, paper, and scissors to defeat computer. let the games begin! </p>
+            <button id="play">Play</button>
+        </div>
+        <h1 id="title">Let's play...</h1>
+        <ul class="buttons">
+            <li class="rock">
+                <button id="rock">
+                    <img class="rock" src="./images/rock.png">
+                </button>
+                <p>Rock</p>
+            </li>
+            <li class="paper">
+                <button id="paper">
+                    <img class="paper" src="./images/paper.png">
+                </button>
+                <p>Paper</p>
+            </li>
+            <li class="scissor">
+                <button id="scissor">
+                    <img src="./images/scissor.png" class="scissor">
+                </button>
+                <p>Scissor</p>
+            </li>
+        </ul>
+        <p id="result">your turn...</p>
+    </div>
+    <footer>
+        <button class="sound"></button>
+        <div class="scores">
+            <p>Computer: <span id="lost">0</span></p>
+            <p>Tie: <span id="tie">0</span></p>
+            <p>Player: <span id="won">0</span></p>
+        </div>
+        <button class="back"></button>
+    </footer>
+    <script src="index.js"></script>
+</body>
+</html>
